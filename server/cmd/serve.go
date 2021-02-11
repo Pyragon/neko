@@ -22,6 +22,7 @@ func init() {
 		neko.Service.Remote,
 		neko.Service.Broadcast,
 		neko.Service.WebSocket,
+		neko.Service.MySQL,
 	}
 
 	cobra.OnInitialize(func() {
