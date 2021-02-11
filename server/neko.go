@@ -136,10 +136,8 @@ func (neko *Neko) Start() {
 	webRTCManager.Start()
 
 	accounts := mysql.New(neko.MySQL, "cryogen_accounts")
-	accounts.Start()
 
 	players := mysql.New(neko.MySQL, "cryogen_global")
-	players.Start()
 
 	webSocketHandler := websocket.New(sessionManager, remoteManager, broadcastManager, webRTCManager, neko.WebSocket, accounts, players)
 	webSocketHandler.Start()
