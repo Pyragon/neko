@@ -1,6 +1,11 @@
 package mysql
 
 import (
+	"database/sql"
+	"strconv"
+
+	_ "github.com/go-sql-driver/mysql"
+
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
@@ -10,6 +15,7 @@ import (
 type MySQLHandler struct {
 	logger zerolog.Logger
 	conf   *config.MySQL
+	db     *sql.DB
 }
 
 func New(conf *config.MySQL) *MySQLHandler {
@@ -17,18 +23,30 @@ func New(conf *config.MySQL) *MySQLHandler {
 	return &MySQLHandler{
 		logger: logger,
 		conf:   conf,
+		db:     nil,
 	}
 }
 
 func (mysql *MySQLHandler) Start() error {
 
-	mysql.logger.Info().Msg("Username: " + mysql.conf.DBUsername)
-	mysql.logger.Info().Msg("Password: " + mysql.conf.DBPassword)
-	mysql.logger.Info().Msg("Database: " + mysql.conf.DBDatabase)
+	db, err := sql.Open("mysql", mysql.conf.DBUsername+":"+mysql.conf.DBPassword+"@tcp("+mysql.conf.DBHost+":"+strconv.Itoa(mysql.conf.DBPort)+")/"+mysql.conf.DBDatabase)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	mysql.db = db
+
+	mysql.logger.Info().Msg("Connected to MYSQL Server!")
 
 	return nil
 }
 
 func (mysql *MySQLHandler) Shutdown() error {
+
+	if mysql.db != nil {
+		mysql.db.Close()
+	}
+
 	return nil
 }
