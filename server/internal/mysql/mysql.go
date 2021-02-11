@@ -21,14 +21,10 @@ func New(conf *config.MySQL) *MySQLHandler {
 }
 
 func (mysql *MySQLHandler) Start() error {
-	mysql.logger.Info().Msg("MySQL Server being started!")
-	mysql.logger.Info().Msg("MySQL Server being started!")
-	mysql.logger.Info().Msg("MySQL Server being started!")
-	mysql.logger.Info().Msg("MySQL Server being started!")
-	mysql.logger.Info().Msg("MySQL Server being started!")
-	mysql.logger.Info().Msg("MySQL Server being started!")
-	mysql.logger.Info().Msg("MySQL Server being started!")
-	mysql.logger.Info().Msg("MySQL Server being started!")
+
+	mysql.logger.Info().Msg("Username: " + mysql.conf.DBUsername)
+	mysql.logger.Info().Msg("Password: " + mysql.conf.DBPassword)
+	mysql.logger.Info().Msg("Database: " + mysql.conf.DBDatabase)
 
 	return nil
 }
