@@ -11,6 +11,7 @@ type Message struct {
 type Disconnect struct {
 	Event   string `json:"event"`
 	Message string `json:"message"`
+	Error   string `json:"error"`
 }
 
 type SignalProvide struct {
@@ -118,6 +119,6 @@ type BroadcastStatus struct {
 }
 
 type BroadcastCreate struct {
-	Event  string `json:"event"`
-	URL    string `json:"url"`
+	Event string `json:"event"`
+	URL   string `json:"url"`
 }
