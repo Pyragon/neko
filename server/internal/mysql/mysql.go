@@ -22,6 +22,7 @@ type MySQLHandler struct {
 
 func New(conf *config.MySQL, database string) *MySQLHandler {
 	logger := log.With().Str("module", "mysql").Logger()
+	logger.Info().Msg("Username from NEW: " + conf.DBUsername)
 	return &MySQLHandler{
 		logger:       logger,
 		conf:         conf,

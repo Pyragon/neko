@@ -48,7 +48,7 @@ func New(sessions types.SessionManager, remote types.RemoteManager, broadcast ty
 const pingPeriod = 60 * time.Second
 
 type WebSocketHandler struct {
-	MySQL *config.MySQL
+	mysqlConf *config.MySQL
 
 	logger   zerolog.Logger
 	upgrader websocket.Upgrader
@@ -86,8 +86,8 @@ func (ws *WebSocketHandler) Start() error {
 		}
 	})
 
-	ws.accounts = mysql.New(ws.MySQL, "cryogen_accounts")
-	ws.players = mysql.New(ws.MySQL, "cryogen_global")
+	ws.accounts = mysql.New(ws.mysqlConf, "cryogen_accounts")
+	ws.players = mysql.New(ws.mysqlConf, "cryogen_global")
 
 	go func() {
 		defer func() {
