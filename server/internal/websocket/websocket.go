@@ -204,7 +204,9 @@ func (ws *WebSocketHandler) authenticate(r *http.Request) (string, string, bool,
 	}
 
 	for k, v := range r.URL.Query() {
-		fmt.Println(k, "value is", v)
+		for _, j := range v {
+			ws.logger.Info().Msg("QUERY VALUE: K: " + k + ", J: " + j)
+		}
 	}
 
 	passwords, ok := r.URL.Query()["password"]
