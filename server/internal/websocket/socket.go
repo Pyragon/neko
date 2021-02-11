@@ -14,6 +14,7 @@ type WebSocket struct {
 	ws         *WebSocketHandler
 	connection *websocket.Conn
 	mu         sync.Mutex
+	rights     int
 }
 
 func (socket *WebSocket) Address() string {

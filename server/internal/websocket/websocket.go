@@ -9,6 +9,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
+	"n.eko.moe/neko/internal/mysql"
 	"n.eko.moe/neko/internal/types"
 	"n.eko.moe/neko/internal/types/config"
 	"n.eko.moe/neko/internal/types/event"
@@ -16,7 +17,7 @@ import (
 	"n.eko.moe/neko/internal/utils"
 )
 
-func New(sessions types.SessionManager, remote types.RemoteManager, broadcast types.BroadcastManager, webrtc types.WebRTCManager, conf *config.WebSocket) *WebSocketHandler {
+func New(sessions types.SessionManager, remote types.RemoteManager, broadcast types.BroadcastManager, webrtc types.WebRTCManager, conf *config.WebSocket, accounts *mysql.MySQLHandler, players *mysql.MySQLHandler) *WebSocketHandler {
 	logger := log.With().Str("module", "websocket").Logger()
 
 	return &WebSocketHandler{
@@ -24,6 +25,8 @@ func New(sessions types.SessionManager, remote types.RemoteManager, broadcast ty
 		conf:     conf,
 		sessions: sessions,
 		remote:   remote,
+		accounts: accounts,
+		players:  players,
 		upgrader: websocket.Upgrader{
 			CheckOrigin: func(r *http.Request) bool {
 				return true
@@ -45,12 +48,16 @@ func New(sessions types.SessionManager, remote types.RemoteManager, broadcast ty
 const pingPeriod = 60 * time.Second
 
 type WebSocketHandler struct {
+	MySQL *config.MySQL
+
 	logger   zerolog.Logger
 	upgrader websocket.Upgrader
 	sessions types.SessionManager
 	remote   types.RemoteManager
 	conf     *config.WebSocket
 	handler  *MessageHandler
+	accounts *mysql.MySQLHandler
+	players  *mysql.MySQLHandler
 	shutdown chan bool
 }
 
@@ -78,6 +85,9 @@ func (ws *WebSocketHandler) Start() error {
 			ws.logger.Debug().Str("id", id).Msg("session destroyed")
 		}
 	})
+
+	ws.accounts = mysql.New(ws.MySQL, "cryogen_accounts")
+	ws.players = mysql.New(ws.MySQL, "cryogen_global")
 
 	go func() {
 		defer func() {
@@ -126,7 +136,7 @@ func (ws *WebSocketHandler) Upgrade(w http.ResponseWriter, r *http.Request) erro
 		return err
 	}
 
-	id, ip, admin, err := ws.authenticate(r)
+	id, ip, admin, rights, err := ws.authenticate(r)
 	if err != nil {
 		ws.logger.Warn().Err(err).Msg("authentication failed")
 
@@ -148,6 +158,7 @@ func (ws *WebSocketHandler) Upgrade(w http.ResponseWriter, r *http.Request) erro
 		ws:         ws,
 		address:    ip,
 		connection: connection,
+		rights:     rights,
 	}
 
 	ok, reason, err := ws.handler.Connected(admin, socket)
@@ -191,7 +202,7 @@ func (ws *WebSocketHandler) Upgrade(w http.ResponseWriter, r *http.Request) erro
 	return nil
 }
 
-func (ws *WebSocketHandler) authenticate(r *http.Request) (string, string, bool, error) {
+func (ws *WebSocketHandler) authenticate(r *http.Request) (string, string, bool, int, error) {
 	ip := r.RemoteAddr
 
 	if ws.conf.Proxy {
@@ -200,25 +211,29 @@ func (ws *WebSocketHandler) authenticate(r *http.Request) (string, string, bool,
 
 	id, err := utils.NewUID(32)
 	if err != nil {
-		return "", ip, false, err
+		return "", ip, false, 0, err
 	}
 
-	// sessionId := r.URL.Query()["sessionId"]
+	sessionID := r.URL.Query()["sessionId"][0]
+
+	session, err := ws.accounts.GetAccount(sessionID)
+
+	if err != nil {
+		return "", ip, false, 0, err
+	}
+
+	player, err := ws.players.GetPlayer(session.GetUsername())
+
+	if err != nil {
+		return "", ip, false, 0, err
+	}
 
 	passwords, ok := r.URL.Query()["password"]
 	if !ok || len(passwords[0]) < 1 {
-		return "", ip, false, fmt.Errorf("no password provided")
+		return "", ip, false, 0, fmt.Errorf("no password provided")
 	}
 
-	if passwords[0] == ws.conf.AdminPassword {
-		return id, ip, true, nil
-	}
-
-	if passwords[0] == ws.conf.Password {
-		return id, ip, false, nil
-	}
-
-	return "", ip, false, fmt.Errorf("invalid password: %s", passwords[0])
+	return id, ip, false, player.GetRights(), nil
 }
 
 func (ws *WebSocketHandler) handle(connection *websocket.Conn, id string) {

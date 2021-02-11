@@ -116,7 +116,8 @@ type Neko struct {
 	broadcastManager *broadcast.BroadcastManager
 	webRTCManager    *webrtc.WebRTCManager
 	webSocketHandler *websocket.WebSocketHandler
-	mysqlHandler     *mysql.MySQLHandler
+	accounts         *mysql.MySQLHandler
+	players          *mysql.MySQLHandler
 }
 
 func (neko *Neko) Preflight() {
@@ -134,11 +135,14 @@ func (neko *Neko) Start() {
 	webRTCManager := webrtc.New(sessionManager, remoteManager, neko.WebRTC)
 	webRTCManager.Start()
 
-	webSocketHandler := websocket.New(sessionManager, remoteManager, broadcastManager, webRTCManager, neko.WebSocket)
-	webSocketHandler.Start()
+	accounts := mysql.New(neko.MySQL, "cryogen_accounts")
+	accounts.Start()
 
-	mysqlHandler := mysql.New(neko.MySQL)
-	mysqlHandler.Start()
+	players := mysql.New(neko.MySQL, "cryogen_global")
+	players.Start()
+
+	webSocketHandler := websocket.New(sessionManager, remoteManager, broadcastManager, webRTCManager, neko.WebSocket, accounts, players)
+	webSocketHandler.Start()
 
 	server := http.New(neko.Server, webSocketHandler)
 	server.Start()
@@ -147,7 +151,8 @@ func (neko *Neko) Start() {
 	neko.remoteManager = remoteManager
 	neko.webRTCManager = webRTCManager
 	neko.webSocketHandler = webSocketHandler
-	neko.mysqlHandler = mysqlHandler
+	neko.accounts = accounts
+	neko.players = players
 	neko.server = server
 }
 
@@ -164,8 +169,14 @@ func (neko *Neko) Shutdown() {
 		neko.logger.Debug().Msg("webrtc manager shutdown")
 	}
 
-	if err := neko.mysqlHandler.Shutdown(); err != nil {
-		neko.logger.Err(err).Msg("mysql handler shutdown with an error")
+	if err := neko.accounts.Shutdown(); err != nil {
+		neko.logger.Err(err).Msg("mysql accounts handler shutdown with an error")
+	} else {
+		neko.logger.Debug().Msg("mysql handler shutdown")
+	}
+
+	if err := neko.players.Shutdown(); err != nil {
+		neko.logger.Err(err).Msg("mysql players handler shutdown with an error")
 	} else {
 		neko.logger.Debug().Msg("mysql handler shutdown")
 	}
