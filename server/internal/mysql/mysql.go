@@ -40,6 +40,8 @@ func (mysql *MySQLHandler) Start() error {
 
 	mysql.db = db
 
+	mysql.logger.Info().Msg("MySQL Server has been started. " + strconv.FormatBool(mysql.db != nil))
+
 	return nil
 }
 
