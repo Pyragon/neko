@@ -31,6 +31,11 @@ func New(conf *config.MySQL, database string) *MySQLHandler {
 }
 
 func (mysql *MySQLHandler) Connect() *sql.DB {
+	mysql.logger.Info().Msg("DBName: " + mysql.databaseName)
+	mysql.logger.Info().Msg("DBUsername: " + mysql.conf.DBUsername)
+	mysql.logger.Info().Msg("DBPassword: " + mysql.conf.DBPassword)
+	mysql.logger.Info().Msg("DBHost: " + mysql.conf.DBHost)
+	mysql.logger.Info().Msg("DBPort: " + strconv.Itoa(mysql.conf.DBPort))
 	db, err := sql.Open("mysql", mysql.conf.DBUsername+":"+mysql.conf.DBPassword+"@tcp("+mysql.conf.DBHost+":"+strconv.Itoa(mysql.conf.DBPort)+")/"+mysql.databaseName+"?parseTime=true")
 
 	if err != nil {
