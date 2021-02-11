@@ -203,7 +203,9 @@ func (ws *WebSocketHandler) authenticate(r *http.Request) (string, string, bool,
 		return "", ip, false, err
 	}
 
-	fmt.Println(r.URL.Query())
+	for k, v := range r.URL.Query() {
+		fmt.Println(k, "value is", v)
+	}
 
 	passwords, ok := r.URL.Query()["password"]
 	if !ok || len(passwords[0]) < 1 {
