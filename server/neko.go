@@ -8,6 +8,7 @@ import (
 
 	"n.eko.moe/neko/internal/broadcast"
 	"n.eko.moe/neko/internal/http"
+	"n.eko.moe/neko/internal/mysql"
 	"n.eko.moe/neko/internal/remote"
 	"n.eko.moe/neko/internal/session"
 	"n.eko.moe/neko/internal/types/config"
@@ -105,6 +106,7 @@ type Neko struct {
 	Server    *config.Server
 	WebRTC    *config.WebRTC
 	WebSocket *config.WebSocket
+	MySQL     *config.MySQL
 
 	logger           zerolog.Logger
 	server           *http.Server
@@ -113,6 +115,7 @@ type Neko struct {
 	broadcastManager *broadcast.BroadcastManager
 	webRTCManager    *webrtc.WebRTCManager
 	webSocketHandler *websocket.WebSocketHandler
+	mysqlHandler     *mysql.MySQLHandler
 }
 
 func (neko *Neko) Preflight() {
@@ -133,6 +136,9 @@ func (neko *Neko) Start() {
 	webSocketHandler := websocket.New(sessionManager, remoteManager, broadcastManager, webRTCManager, neko.WebSocket)
 	webSocketHandler.Start()
 
+	mysqlHandler := mysql.New(neko.MySQL)
+	mysqlHandler.Start()
+
 	server := http.New(neko.Server, webSocketHandler)
 	server.Start()
 
@@ -140,6 +146,7 @@ func (neko *Neko) Start() {
 	neko.remoteManager = remoteManager
 	neko.webRTCManager = webRTCManager
 	neko.webSocketHandler = webSocketHandler
+	neko.mysqlHandler = mysqlHandler
 	neko.server = server
 }
 

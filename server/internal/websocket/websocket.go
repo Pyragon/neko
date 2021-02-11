@@ -203,11 +203,7 @@ func (ws *WebSocketHandler) authenticate(r *http.Request) (string, string, bool,
 		return "", ip, false, err
 	}
 
-	for k, v := range r.URL.Query() {
-		for _, j := range v {
-			ws.logger.Info().Msg("QUERY VALUE: K: " + k + ", J: " + j)
-		}
-	}
+	// sessionId := r.URL.Query()["sessionId"]
 
 	passwords, ok := r.URL.Query()["password"]
 	if !ok || len(passwords[0]) < 1 {
