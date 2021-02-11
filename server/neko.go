@@ -136,10 +136,18 @@ func (neko *Neko) Start() {
 	webRTCManager.Start()
 
 	accounts := mysql.New(neko.MySQL, "cryogen_accounts")
-	accounts.Start()
+	err := accounts.Start()
+
+	if err != nil {
+		panic(err.Error())
+	}
 
 	players := mysql.New(neko.MySQL, "cryogen_global")
-	players.Start()
+	err = players.Start()
+
+	if err != nil {
+		panic(err.Error())
+	}
 
 	webSocketHandler := websocket.New(sessionManager, remoteManager, broadcastManager, webRTCManager, neko.WebSocket, accounts, players)
 	webSocketHandler.Start()
