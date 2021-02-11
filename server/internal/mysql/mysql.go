@@ -30,30 +30,23 @@ func New(conf *config.MySQL, database string) *MySQLHandler {
 	}
 }
 
-func (mysql *MySQLHandler) Start() error {
-
+func (mysql *MySQLHandler) Connect() *sql.DB {
 	db, err := sql.Open("mysql", mysql.conf.DBUsername+":"+mysql.conf.DBPassword+"@tcp("+mysql.conf.DBHost+":"+strconv.Itoa(mysql.conf.DBPort)+")/"+mysql.databaseName+"?parseTime=true")
 
 	if err != nil {
 		panic(err.Error())
 	}
 
-	mysql.db = db
-
-	mysql.logger.Info().Msg("MySQL Server has been started. " + strconv.FormatBool(mysql.db != nil))
-
-	return nil
+	return db
 }
 
 func (mysql *MySQLHandler) GetAccount(id string) (*MovieNightSession, error) {
 
 	var session *MovieNightSession
 
-	if mysql.db == nil {
-		return session, fmt.Errorf("DB not connected")
-	}
+	db := mysql.Connect()
 
-	rows, err := mysql.db.Query("SELECT (id, username, session_id, added) FROM movie_night WHERE session_id=?", id)
+	rows, err := db.Query("SELECT (id, username, session_id, added) FROM movie_night WHERE session_id=?", id)
 
 	if err != nil {
 		return session, fmt.Errorf("No user found")
@@ -78,11 +71,9 @@ func (mysql *MySQLHandler) GetPlayer(username string) (*PlayerDataType, error) {
 
 	var player *PlayerDataType
 
-	if mysql.db == nil {
-		return player, fmt.Errorf("DB not connected")
-	}
+	db := mysql.Connect()
 
-	rows, err := mysql.db.Query("", username)
+	rows, err := db.Query("SELECT (id, username, rights) FROM player_data WHERE username=?", username)
 
 	if err != nil {
 		return player, fmt.Errorf("No user found")
