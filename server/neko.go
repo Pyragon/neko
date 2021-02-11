@@ -135,6 +135,8 @@ func (neko *Neko) Start() {
 	webRTCManager := webrtc.New(sessionManager, remoteManager, neko.WebRTC)
 	webRTCManager.Start()
 
+	neko.logger.Info().Msg("DBUsername IS NOT FUCKING NULL: " + neko.MySQL.DBUsername)
+
 	accounts := mysql.New(neko.MySQL, "cryogen_accounts")
 
 	players := mysql.New(neko.MySQL, "cryogen_global")
