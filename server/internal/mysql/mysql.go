@@ -28,3 +28,7 @@ func (mysql *MySQLHandler) Start() error {
 
 	return nil
 }
+
+func (mysql *MySQLHandler) Shutdown() error {
+	return nil
+}

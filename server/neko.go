@@ -65,6 +65,7 @@ func init() {
 		Remote:    &config.Remote{},
 		Broadcast: &config.Broadcast{},
 		WebRTC:    &config.WebRTC{},
+		MySQL:     &config.MySQL{},
 		WebSocket: &config.WebSocket{},
 	}
 }
@@ -161,6 +162,12 @@ func (neko *Neko) Shutdown() {
 		neko.logger.Err(err).Msg("webrtc manager shutdown with an error")
 	} else {
 		neko.logger.Debug().Msg("webrtc manager shutdown")
+	}
+
+	if err := neko.mysqlHandler.Shutdown(); err != nil {
+		neko.logger.Err(err).Msg("mysql handler shutdown with an error")
+	} else {
+		neko.logger.Debug().Msg("mysql handler shutdown")
 	}
 
 	if err := neko.webSocketHandler.Shutdown(); err != nil {
