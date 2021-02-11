@@ -10,7 +10,7 @@ build_client() {
 
 build_server() {
 	docker build -t neko-dev-server -f base/Dockerfile --target server "$BASE"
-	docker run --rm -v "$BASE"/server/bin:/tmp/bin neko-dev-server sh -c "rm -rf /tmp/bin/neko; cp /src/bin/neko /tmp/bin"
+	docker run --rm -v "$BASE"server/bin:/tmp/bin neko-dev-server sh -c "rm -rf /tmp/bin/neko; cp /src/bin/neko /tmp/bin"
 }
 
 build_base() {
