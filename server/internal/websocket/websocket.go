@@ -1,7 +1,6 @@
 package websocket
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -222,11 +221,6 @@ func (ws *WebSocketHandler) authenticate(r *http.Request) (string, string, bool,
 
 	if err != nil {
 		return "", ip, false, 0, err
-	}
-
-	passwords, ok := r.URL.Query()["password"]
-	if !ok || len(passwords[0]) < 1 {
-		return "", ip, false, 0, fmt.Errorf("no password provided")
 	}
 
 	return id, ip, false, player.GetRights(), nil
