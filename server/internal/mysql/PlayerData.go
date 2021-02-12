@@ -6,8 +6,8 @@ type PlayerDataType struct {
 	rights   int
 }
 
-func PlayerData(id int, username string, rights int) *PlayerDataType {
-	return &PlayerDataType{
+func PlayerData(id int, username string, rights int) PlayerDataType {
+	return PlayerDataType{
 		id:       id,
 		username: username,
 		rights:   rights,

@@ -68,9 +68,9 @@ func (mysql *MySQLHandler) GetAccount(id string) (MovieNightSession, error) {
 	return result, nil
 }
 
-func (mysql *MySQLHandler) GetPlayer(username string) (*PlayerDataType, error) {
+func (mysql *MySQLHandler) GetPlayer(username string) (PlayerDataType, error) {
 
-	var player *PlayerDataType
+	var player PlayerDataType
 
 	db := mysql.Connect()
 
