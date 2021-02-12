@@ -50,7 +50,7 @@ func (mysql *MySQLHandler) GetAccount(id string) (*MovieNightSession, error) {
 	rows, err := db.Query("SELECT (id, username, session_id, expiry) FROM sessions WHERE session_id=?", id)
 
 	if err != nil {
-		return session, fmt.Errorf("No user found")
+		return session, fmt.Errorf("No user found: " + id + ", " + err.Error())
 	}
 
 	for rows.Next() {
