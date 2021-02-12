@@ -47,7 +47,7 @@ func (mysql *MySQLHandler) GetAccount(id string) (*MovieNightSession, error) {
 
 	db := mysql.Connect()
 
-	rows, err := db.Query("SELECT (id, username, session_id, expiry) FROM sessions WHERE session_id=?", id)
+	rows, err := db.Query("SELECT id, username, session_id, expiry FROM sessions WHERE session_id=?", id)
 
 	if err != nil {
 		return session, fmt.Errorf("No user found: " + id + ", " + err.Error())
@@ -74,7 +74,7 @@ func (mysql *MySQLHandler) GetPlayer(username string) (*PlayerDataType, error) {
 
 	db := mysql.Connect()
 
-	rows, err := db.Query("SELECT (id, username, rights) FROM player_data WHERE username=?", username)
+	rows, err := db.Query("SELECT id, username, rights FROM player_data WHERE username=?", username)
 
 	if err != nil {
 		return player, fmt.Errorf("No user found")
