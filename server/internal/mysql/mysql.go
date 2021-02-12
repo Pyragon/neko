@@ -32,11 +32,6 @@ func New(conf *config.MySQL, database string) *MySQLHandler {
 }
 
 func (mysql *MySQLHandler) Connect() *sql.DB {
-	mysql.logger.Info().Msg("DBName: " + mysql.databaseName)
-	mysql.logger.Info().Msg("DBUsername: " + mysql.conf.DBUsername)
-	mysql.logger.Info().Msg("DBPassword: " + mysql.conf.DBPassword)
-	mysql.logger.Info().Msg("DBHost: " + mysql.conf.DBHost)
-	mysql.logger.Info().Msg("DBPort: " + strconv.Itoa(mysql.conf.DBPort))
 	db, err := sql.Open("mysql", mysql.conf.DBUsername+":"+mysql.conf.DBPassword+"@tcp("+mysql.conf.DBHost+":"+strconv.Itoa(mysql.conf.DBPort)+")/"+mysql.databaseName+"?parseTime=true")
 
 	if err != nil {
@@ -52,7 +47,7 @@ func (mysql *MySQLHandler) GetAccount(id string) (*MovieNightSession, error) {
 
 	db := mysql.Connect()
 
-	rows, err := db.Query("SELECT (id, username, session_id, added) FROM movie_night WHERE session_id=?", id)
+	rows, err := db.Query("SELECT (id, username, session_id, expiry) FROM sessions WHERE session_id=?", id)
 
 	if err != nil {
 		return session, fmt.Errorf("No user found")
