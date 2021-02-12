@@ -38,7 +38,9 @@ type PayloadKey struct {
 }
 
 func (manager *WebRTCManager) handle(id string, msg webrtc.DataChannelMessage, session types.Session) error {
+	manager.logger.Info().Msg("Handling data message!!")
 	if !manager.sessions.IsHost(session.Name()) {
+		manager.logger.Info().Msg(session.Name() + " is not the host!")
 		return nil
 	}
 
