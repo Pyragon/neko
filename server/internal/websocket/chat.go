@@ -15,7 +15,7 @@ func (h *MessageHandler) chat(id string, session types.Session, payload *message
 		message.ChatSend{
 			Event:   event.CHAT_MESSAGE,
 			Content: payload.Content,
-			ID:      id,
+			Name:    session.Name(),
 		}, nil); err != nil {
 		h.logger.Warn().Err(err).Msgf("broadcasting event %s has failed", event.CONTROL_RELEASE)
 		return err

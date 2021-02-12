@@ -37,45 +37,18 @@ func (h *MessageHandler) controlRequest(id string, session types.Session) error 
 		h.logger.Debug().Msg(session.Name() + " is not an admin")
 		return nil
 	}
-	// check for host
-	if !h.sessions.HasHost() {
-		// set host
-		h.sessions.SetHost(session.Name())
+	//Simply give host, and tell everyone controls have been taken
+	// set host
+	h.sessions.SetHost(session.Name())
 
-		// let everyone know
-		if err := h.sessions.Broadcast(
-			message.Control{
-				Event: event.CONTROL_LOCKED,
-				Name:  session.Name(),
-			}, nil); err != nil {
-			h.logger.Warn().Err(err).Msgf("broadcasting event %s has failed", event.CONTROL_LOCKED)
-			return err
-		}
-
-		return nil
-	}
-
-	// get host
-	host, ok := h.sessions.GetHost()
-	if ok {
-
-		// tell session there is a host
-		if err := session.Send(message.Control{
-			Event: event.CONTROL_REQUEST,
+	// let everyone know
+	if err := h.sessions.Broadcast(
+		message.Control{
+			Event: event.CONTROL_LOCKED,
 			Name:  session.Name(),
-		}); err != nil {
-			h.logger.Warn().Err(err).Str("id", id).Msgf("sending event %s has failed", event.CONTROL_REQUEST)
-			return err
-		}
-
-		// tell host session wants to be host
-		if err := host.Send(message.Control{
-			Event: event.CONTROL_REQUESTING,
-			Name:  session.Name(),
-		}); err != nil {
-			h.logger.Warn().Err(err).Str("id", host.ID()).Msgf("sending event %s has failed", event.CONTROL_REQUESTING)
-			return err
-		}
+		}, nil); err != nil {
+		h.logger.Warn().Err(err).Msgf("broadcasting event %s has failed", event.CONTROL_LOCKED)
+		return err
 	}
 
 	return nil
