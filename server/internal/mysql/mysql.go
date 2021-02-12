@@ -41,9 +41,9 @@ func (mysql *MySQLHandler) Connect() *sql.DB {
 	return db
 }
 
-func (mysql *MySQLHandler) GetAccount(id string) (*MovieNightSession, error) {
+func (mysql *MySQLHandler) GetAccount(id string) (MovieNightSession, error) {
 
-	var session *MovieNightSession
+	var session MovieNightSession
 
 	db := mysql.Connect()
 

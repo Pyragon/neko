@@ -9,8 +9,8 @@ type MovieNightSession struct {
 	added     time.Time
 }
 
-func MovieNight(id int, username string, sessionId string, added time.Time) *MovieNightSession {
-	return &MovieNightSession{
+func MovieNight(id int, username string, sessionId string, added time.Time) MovieNightSession {
+	return MovieNightSession{
 		id:        id,
 		username:  username,
 		sessionId: sessionId,
