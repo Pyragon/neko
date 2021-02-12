@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/pion/webrtc/v2"
+	"n.eko.moe/neko/internal/types"
 )
 
 const OP_MOVE = 0x01
@@ -36,8 +37,8 @@ type PayloadKey struct {
 	Key uint64
 }
 
-func (manager *WebRTCManager) handle(id string, msg webrtc.DataChannelMessage) error {
-	if !manager.sessions.IsHost(id) {
+func (manager *WebRTCManager) handle(id string, msg webrtc.DataChannelMessage, session types.Session) error {
+	if !manager.sessions.IsHost(session.Name()) {
 		return nil
 	}
 

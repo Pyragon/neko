@@ -35,6 +35,10 @@ func (session *Session) Admin() bool {
 	return session.admin
 }
 
+func (session *Session) GetRights() int {
+	return session.rights
+}
+
 func (session *Session) Muted() bool {
 	return session.muted
 }

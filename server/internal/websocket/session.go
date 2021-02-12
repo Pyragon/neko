@@ -58,7 +58,7 @@ func (h *MessageHandler) SessionConnected(id string, session types.Session) erro
 	if ok {
 		if err := session.Send(message.Control{
 			Event: event.CONTROL_LOCKED,
-			ID:    host.ID(),
+			Name:  host.Name(),
 		}); err != nil {
 			h.logger.Warn().Str("id", id).Err(err).Msgf("sending event %s has failed", event.CONTROL_LOCKED)
 			return err
@@ -78,13 +78,13 @@ func (h *MessageHandler) SessionConnected(id string, session types.Session) erro
 	return nil
 }
 
-func (h *MessageHandler) SessionDestroyed(id string) error {
+func (h *MessageHandler) SessionDestroyed(name string) error {
 	// clear host if exists
-	if h.sessions.IsHost(id) {
+	if h.sessions.IsHost(name) {
 		h.sessions.ClearHost()
 		if err := h.sessions.Broadcast(message.Control{
 			Event: event.CONTROL_RELEASE,
-			ID:    id,
+			Name:  name,
 		}, nil); err != nil {
 			h.logger.Warn().Err(err).Msgf("broadcasting event %s has failed", event.CONTROL_RELEASE)
 		}
@@ -94,7 +94,7 @@ func (h *MessageHandler) SessionDestroyed(id string) error {
 	if err := h.sessions.Broadcast(
 		message.MemberDisconnected{
 			Event: event.MEMBER_DISCONNECTED,
-			ID:    id,
+			Name:  name,
 		}, nil); err != nil {
 		h.logger.Warn().Err(err).Msgf("broadcasting event %s has failed", event.MEMBER_DISCONNECTED)
 		return err

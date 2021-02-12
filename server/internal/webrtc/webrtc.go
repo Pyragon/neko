@@ -132,7 +132,7 @@ func (manager *WebRTCManager) CreatePeer(id string, session types.Session) (stri
 
 	connection.OnDataChannel(func(d *webrtc.DataChannel) {
 		d.OnMessage(func(msg webrtc.DataChannelMessage) {
-			if err = manager.handle(id, msg); err != nil {
+			if err = manager.handle(id, msg, session); err != nil {
 				manager.logger.Warn().Err(err).Msg("data handle failed")
 			}
 		})

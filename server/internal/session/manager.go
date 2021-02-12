@@ -41,7 +41,7 @@ func (manager *SessionManager) New(id string, admin bool, rights int, username s
 		connected: false,
 	}
 
-	manager.members[id] = session
+	manager.members[username] = session
 	manager.emmiter.Emit("created", id, session)
 
 	if manager.remote.Streaming() != true && len(manager.members) > 0 {

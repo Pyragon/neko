@@ -46,13 +46,13 @@ func (h *MessageHandler) Disconnected(id string) error {
 	return h.sessions.Destroy(id)
 }
 
-func (h *MessageHandler) Message(id string, raw []byte) error {
+func (h *MessageHandler) Message(id string, raw []byte, name string) error {
 	header := message.Message{}
 	if err := json.Unmarshal(raw, &header); err != nil {
 		return err
 	}
 
-	session, ok := h.sessions.Get(id)
+	session, ok := h.sessions.Get(name)
 	if !ok {
 		errors.Errorf("unknown session id %s", id)
 	}
@@ -89,7 +89,6 @@ func (h *MessageHandler) Message(id string, raw []byte) error {
 			utils.Unmarshal(payload, raw, func() error {
 				return h.controlKeyboard(id, session, payload)
 			}), "%s failed", header.Event)
-
 
 	// Chat Events
 	case event.CHAT_MESSAGE:

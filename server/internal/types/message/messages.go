@@ -38,7 +38,7 @@ type Member struct {
 }
 type MemberDisconnected struct {
 	Event string `json:"event"`
-	ID    string `json:"id"`
+	Name  string `json:"name"`
 }
 
 type Clipboard struct {
@@ -56,12 +56,12 @@ type Keyboard struct {
 
 type Control struct {
 	Event string `json:"event"`
-	ID    string `json:"id"`
+	Name  string `json:"name"`
 }
 
 type ControlTarget struct {
 	Event  string `json:"event"`
-	ID     string `json:"id"`
+	Name   string `json:"name"`
 	Target string `json:"target"`
 }
 

@@ -193,7 +193,7 @@ func (ws *WebSocketHandler) Upgrade(w http.ResponseWriter, r *http.Request) erro
 			Msg("session ended")
 	}()
 
-	ws.handle(connection, id)
+	ws.handle(connection, id, name)
 	return nil
 }
 
@@ -226,7 +226,7 @@ func (ws *WebSocketHandler) authenticate(r *http.Request) (string, string, bool,
 	return id, ip, false, player.GetRights(), player.GetUsername(), nil
 }
 
-func (ws *WebSocketHandler) handle(connection *websocket.Conn, id string) {
+func (ws *WebSocketHandler) handle(connection *websocket.Conn, id string, name string) {
 	bytes := make(chan []byte)
 	cancel := make(chan struct{})
 	ticker := time.NewTicker(pingPeriod)
@@ -235,7 +235,7 @@ func (ws *WebSocketHandler) handle(connection *websocket.Conn, id string) {
 		defer func() {
 			ticker.Stop()
 			ws.logger.Debug().Str("address", connection.RemoteAddr().String()).Msg("handle socket ending")
-			ws.handler.Disconnected(id)
+			ws.handler.Disconnected(name)
 		}()
 
 		for {
@@ -261,7 +261,7 @@ func (ws *WebSocketHandler) handle(connection *websocket.Conn, id string) {
 				Str("address", connection.RemoteAddr().String()).
 				Str("raw", string(raw)).
 				Msg("received message from client")
-			if err := ws.handler.Message(id, raw); err != nil {
+			if err := ws.handler.Message(id, raw, name); err != nil {
 				ws.logger.Error().Err(err).Msg("message handler has failed")
 			}
 		case <-cancel:

@@ -11,6 +11,7 @@ type Session interface {
 	ID() string
 	Name() string
 	Admin() bool
+	GetRights() int
 	Muted() bool
 	Connected() bool
 	Member() *Member
@@ -28,8 +29,8 @@ type Session interface {
 type SessionManager interface {
 	New(id string, admin bool, rights int, username string, socket WebSocket) Session
 	HasHost() bool
-	IsHost(id string) bool
-	SetHost(id string) error
+	IsHost(name string) bool
+	SetHost(name string) error
 	GetHost() (Session, bool)
 	ClearHost()
 	Has(id string) bool
