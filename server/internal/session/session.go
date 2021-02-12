@@ -12,7 +12,8 @@ import (
 type Session struct {
 	logger    zerolog.Logger
 	id        string
-	name      string
+	username  string
+	rights    int
 	admin     bool
 	muted     bool
 	connected bool
@@ -27,7 +28,7 @@ func (session *Session) ID() string {
 }
 
 func (session *Session) Name() string {
-	return session.name
+	return session.username
 }
 
 func (session *Session) Admin() bool {
@@ -52,7 +53,7 @@ func (session *Session) Address() string {
 func (session *Session) Member() *types.Member {
 	return &types.Member{
 		ID:    session.id,
-		Name:  session.name,
+		Name:  session.username,
 		Admin: session.admin,
 		Muted: session.muted,
 	}
@@ -60,11 +61,6 @@ func (session *Session) Member() *types.Member {
 
 func (session *Session) SetMuted(muted bool) {
 	session.muted = muted
-}
-
-func (session *Session) SetName(name string) error {
-	session.name = name
-	return nil
 }
 
 func (session *Session) SetSocket(socket types.WebSocket) error {

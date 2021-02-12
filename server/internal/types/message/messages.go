@@ -23,9 +23,8 @@ type SignalProvide struct {
 }
 
 type SignalAnswer struct {
-	Event       string `json:"event"`
-	DisplayName string `json:"displayname"`
-	SDP         string `json:"sdp"`
+	Event string `json:"event"`
+	SDP   string `json:"sdp"`
 }
 
 type MembersList struct {

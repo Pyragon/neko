@@ -1,0 +1,3 @@
+☐ Render users connected from actual usernames from go server
+☐ Only 'request' control when an admin connects, as opposed to taking it
+☐ When an admin actually clicks 'enable control', it 'takes' the control

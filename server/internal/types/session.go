@@ -15,7 +15,6 @@ type Session interface {
 	Connected() bool
 	Member() *Member
 	SetMuted(muted bool)
-	SetName(name string) error
 	SetConnected(connected bool) error
 	SetSocket(socket WebSocket) error
 	SetPeer(peer Peer) error
@@ -27,7 +26,7 @@ type Session interface {
 }
 
 type SessionManager interface {
-	New(id string, admin bool, socket WebSocket) Session
+	New(id string, admin bool, rights int, username string, socket WebSocket) Session
 	HasHost() bool
 	IsHost(id string) bool
 	SetHost(id string) error
