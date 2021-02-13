@@ -72,10 +72,13 @@ func (h *MessageHandler) removeMessage(id string, session types.Session, payload
 
 	results := make([]*types.ChatMessage, len(h.messages))
 
+	found := false
+
 	for _, m := range h.messages {
 		if m.ID != payload.ID {
 			results = append(results, m)
 		} else {
+			found = true
 			if err := h.sessions.Broadcast(
 				message.ChatRemove{
 					Event: event.CHAT_REMOVE,
@@ -85,6 +88,10 @@ func (h *MessageHandler) removeMessage(id string, session types.Session, payload
 				return err
 			}
 		}
+	}
+
+	if found {
+		results = results[0 : len(results)-1]
 	}
 
 	h.messages = results
