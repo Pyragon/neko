@@ -89,13 +89,13 @@ type EmoteSend struct {
 
 type Admin struct {
 	Event string `json:"event"`
-	ID    string `json:"id"`
+	Name  string `json:"name"`
 }
 
 type AdminTarget struct {
 	Event  string `json:"event"`
 	Target string `json:"target"`
-	ID     string `json:"id"`
+	Name   string `json:"name"`
 }
 
 type ScreenResolution struct {

@@ -27,7 +27,7 @@ func (h *MessageHandler) SessionCreated(id string, session types.Session) error 
 		if h.locked {
 			if err := session.Send(message.Admin{
 				Event: event.ADMIN_LOCK,
-				ID:    id,
+				Name:  session.Name(),
 			}); err != nil {
 				h.logger.Warn().Str("id", id).Err(err).Msgf("sending event %s has failed", event.ADMIN_LOCK)
 				return err

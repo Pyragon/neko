@@ -227,6 +227,10 @@ func (ws *WebSocketHandler) authenticate(r *http.Request) (string, string, bool,
 		return "", ip, false, 0, "", fmt.Errorf("User already connected")
 	}
 
+	if player.IsBanned() {
+		return "", ip, false, 0, "", fmt.Errorf("You are banned")
+	}
+
 	return id, ip, false, player.GetRights(), player.GetUsername(), nil
 }
 
