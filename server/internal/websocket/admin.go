@@ -155,19 +155,19 @@ func (h *MessageHandler) adminGive(id string, session types.Session, payload *me
 }
 
 func (h *MessageHandler) adminMute(id string, session types.Session, payload *message.Admin) error {
-	if session.GetRights() != 1 {
-		h.logger.Debug().Msg("user not staff")
+	if session.GetRights() < 1 {
+		h.logger.Info().Msg("user not staff")
 		return nil
 	}
 
 	target, ok := h.sessions.Get(payload.Name)
 	if !ok {
-		h.logger.Debug().Msg("can't find session id")
+		h.logger.Info().Msg("can't find session id")
 		return nil
 	}
 
 	if target.GetRights() > 0 {
-		h.logger.Debug().Msg("target is staff, baling")
+		h.logger.Info().Msg("target is staff, baling")
 		return nil
 	}
 
@@ -189,14 +189,14 @@ func (h *MessageHandler) adminMute(id string, session types.Session, payload *me
 }
 
 func (h *MessageHandler) adminUnmute(id string, session types.Session, payload *message.Admin) error {
-	if session.GetRights() != 2 {
-		h.logger.Debug().Msg("user not admin")
+	if session.GetRights() < 1 {
+		h.logger.Info().Msg("user not admin")
 		return nil
 	}
 
 	target, ok := h.sessions.Get(payload.Name)
 	if !ok {
-		h.logger.Debug().Msg("can't find target session")
+		h.logger.Info().Msg("can't find target session")
 		return nil
 	}
 
