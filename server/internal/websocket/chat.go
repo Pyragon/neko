@@ -48,6 +48,10 @@ func (h *MessageHandler) chat(id string, session types.Session, payload *message
 
 	h.messages = append(h.messages, chatMessage)
 
+	if len(h.messages) > 200 {
+		h.messages = h.messages[1:]
+	}
+
 	if err := h.sessions.Broadcast(
 		message.ChatSend{
 			Event:       event.CHAT_MESSAGE,
@@ -61,6 +65,18 @@ func (h *MessageHandler) chat(id string, session types.Session, payload *message
 }
 
 func (h *MessageHandler) sendPreviousChats(session types.Session) error {
+
+	var results []*types.ChatMessage
+
+	for _, m := range h.messages {
+		currentMillis := time.Now().UnixNano() / int64(time.Millisecond)
+		if (currentMillis - m.Stamp) < (3 * 60 * 60 * 1000) {
+			results = append(results, m)
+		}
+	}
+
+	h.messages = results
+
 	if err := h.sessions.Broadcast(
 		message.ChatAll{
 			Event:    event.CHAT_ALL,
