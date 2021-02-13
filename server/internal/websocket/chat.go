@@ -1,6 +1,7 @@
 package websocket
 
 import (
+	"fmt"
 	"regexp"
 	"time"
 
@@ -45,11 +46,14 @@ func (h *MessageHandler) chat(id string, session types.Session, payload *message
 		Content: content,
 	}
 
+	fmt.Println(chatMessage)
+
 	if err := h.sessions.Broadcast(
 		message.ChatSend{
 			Event:   event.CHAT_MESSAGE,
-			Message: chatMessage,
 			Name:    session.Name(),
+			Content: content,
+			ChatID:  chatID,
 		}, nil); err != nil {
 		h.logger.Warn().Err(err).Msgf("broadcasting event %s has failed", event.CONTROL_RELEASE)
 		return err
