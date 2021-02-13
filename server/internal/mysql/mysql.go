@@ -74,7 +74,7 @@ func (mysql *MySQLHandler) GetPlayer(username string) (PlayerDataType, error) {
 
 	db := mysql.Connect()
 
-	rows, err := db.Query("SELECT id, username, rights, banned_from_movie_night FROM player_data WHERE username=?", username)
+	rows, err := db.Query("SELECT id, username, rights, muted_from_movie_night, banned_from_movie_night FROM player_data WHERE username=?", username)
 
 	if err != nil {
 		return player, fmt.Errorf("No user found")
@@ -82,7 +82,7 @@ func (mysql *MySQLHandler) GetPlayer(username string) (PlayerDataType, error) {
 
 	for rows.Next() {
 
-		err := rows.Scan(&player.id, &player.username, &player.rights, &player.banned)
+		err := rows.Scan(&player.id, &player.username, &player.rights, &player.muted, &player.banned)
 
 		if err != nil {
 			return player, fmt.Errorf("Error scanning to struct")
@@ -92,7 +92,7 @@ func (mysql *MySQLHandler) GetPlayer(username string) (PlayerDataType, error) {
 
 	defer rows.Close()
 
-	result := PlayerData(player.id, player.username, player.rights, player.banned)
+	result := PlayerData(player.id, player.username, player.rights, player.muted, player.banned)
 
 	return result, nil
 

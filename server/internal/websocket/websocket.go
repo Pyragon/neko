@@ -131,7 +131,7 @@ func (ws *WebSocketHandler) Upgrade(w http.ResponseWriter, r *http.Request) erro
 		return err
 	}
 
-	id, ip, admin, rights, name, err := ws.authenticate(r)
+	id, ip, admin, rights, name, muted, err := ws.authenticate(r)
 	if err != nil {
 		ws.logger.Warn().Err(err).Msg("authentication failed")
 
@@ -177,7 +177,7 @@ func (ws *WebSocketHandler) Upgrade(w http.ResponseWriter, r *http.Request) erro
 		return nil
 	}
 
-	ws.sessions.New(id, admin, rights, name, socket)
+	ws.sessions.New(id, admin, rights, name, muted, socket)
 
 	ws.logger.
 		Debug().
@@ -197,7 +197,7 @@ func (ws *WebSocketHandler) Upgrade(w http.ResponseWriter, r *http.Request) erro
 	return nil
 }
 
-func (ws *WebSocketHandler) authenticate(r *http.Request) (string, string, bool, int, string, error) {
+func (ws *WebSocketHandler) authenticate(r *http.Request) (string, string, bool, int, string, bool, error) {
 	ip := r.RemoteAddr
 
 	if ws.conf.Proxy {
@@ -206,7 +206,7 @@ func (ws *WebSocketHandler) authenticate(r *http.Request) (string, string, bool,
 
 	id, err := utils.NewUID(32)
 	if err != nil {
-		return "", ip, false, 0, "", err
+		return "", ip, false, 0, "", false, err
 	}
 
 	sessionID := r.URL.Query()["sessionId"][0]
@@ -214,24 +214,24 @@ func (ws *WebSocketHandler) authenticate(r *http.Request) (string, string, bool,
 	session, err := ws.accounts.GetAccount(sessionID)
 
 	if err != nil {
-		return "", ip, false, 0, "", err
+		return "", ip, false, 0, "", false, err
 	}
 
 	player, err := ws.players.GetPlayer(session.GetUsername())
 
 	if err != nil {
-		return "", ip, false, 0, "", err
+		return "", ip, false, 0, "", false, err
 	}
 
 	if ws.sessions.Has(player.GetUsername()) {
-		return "", ip, false, 0, "", fmt.Errorf("User already connected")
+		return "", ip, false, 0, "", false, fmt.Errorf("User already connected")
 	}
 
 	if player.IsBanned() {
-		return "", ip, false, 0, "", fmt.Errorf("You are banned")
+		return "", ip, false, 0, "", false, fmt.Errorf("You are banned")
 	}
 
-	return id, ip, false, player.GetRights(), player.GetUsername(), nil
+	return id, ip, false, player.GetRights(), player.GetUsername(), player.IsMuted(), nil
 }
 
 func (ws *WebSocketHandler) handle(connection *websocket.Conn, id string, name string) {

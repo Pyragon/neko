@@ -29,7 +29,7 @@ type Session interface {
 }
 
 type SessionManager interface {
-	New(id string, admin bool, rights int, username string, socket WebSocket) Session
+	New(id string, admin bool, rights int, username string, muted bool, socket WebSocket) Session
 	HasHost() bool
 	IsHost(name string) bool
 	SetHost(name string) error

@@ -5,14 +5,16 @@ type PlayerDataType struct {
 	username string
 	rights   int
 	banned   int
+	muted    int
 }
 
-func PlayerData(id int, username string, rights int, banned int) PlayerDataType {
+func PlayerData(id int, username string, rights int, banned int, muted int) PlayerDataType {
 	return PlayerDataType{
 		id:       id,
 		username: username,
 		rights:   rights,
 		banned:   banned,
+		muted:    muted,
 	}
 }
 
@@ -30,4 +32,8 @@ func (data *PlayerDataType) GetRights() int {
 
 func (data *PlayerDataType) IsBanned() bool {
 	return data.banned == 1
+}
+
+func (data *PlayerDataType) IsMuted() bool {
+	return data.muted == 1
 }

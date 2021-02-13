@@ -29,7 +29,7 @@ type SessionManager struct {
 	emmiter events.EventEmmiter
 }
 
-func (manager *SessionManager) New(id string, admin bool, rights int, username string, socket types.WebSocket) types.Session {
+func (manager *SessionManager) New(id string, admin bool, rights int, username string, muted bool, socket types.WebSocket) types.Session {
 	session := &Session{
 		id:        id,
 		rights:    rights,
@@ -39,6 +39,7 @@ func (manager *SessionManager) New(id string, admin bool, rights int, username s
 		socket:    socket,
 		logger:    manager.logger.With().Str("id", id).Logger(),
 		connected: false,
+		muted:     false,
 	}
 
 	manager.members[username] = session
