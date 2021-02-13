@@ -207,7 +207,7 @@ func (h *MessageHandler) adminUnmute(id string, session types.Session, payload *
 	if err := h.sessions.Broadcast(
 		message.AdminTarget{
 			Event:  event.ADMIN_UNMUTE,
-			Target: target.ID(),
+			Target: target.Name(),
 			Name:   session.Name(),
 		}, nil); err != nil {
 		h.logger.Warn().Err(err).Msgf("broadcasting event %s has failed", event.ADMIN_UNMUTE)
