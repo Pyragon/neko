@@ -43,6 +43,7 @@ func (h *MessageHandler) chat(id string, session types.Session, payload *message
 		ID:      chatID,
 		Author:  session.Name(),
 		Content: content,
+		Stamp:   time.Now().UnixNano() / int64(time.Millisecond),
 	}
 
 	h.messages = append(h.messages, chatMessage)

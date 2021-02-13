@@ -177,12 +177,6 @@ func (ws *WebSocketHandler) Upgrade(w http.ResponseWriter, r *http.Request) erro
 		return nil
 	}
 
-	if muted {
-		ws.logger.Info().Msg(name + " IS MUTED")
-	} else {
-		ws.logger.Info().Msg(name + " IS NOT MUTED")
-	}
-
 	ws.sessions.New(id, admin, rights, name, muted, socket)
 
 	ws.logger.
