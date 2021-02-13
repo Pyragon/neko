@@ -104,6 +104,9 @@ func (h *MessageHandler) sendPreviousChats(session types.Session) error {
 	var results []*types.ChatMessage
 
 	for _, m := range h.messages {
+		if m == nil {
+			continue
+		}
 		currentMillis := time.Now().UnixNano() / int64(time.Millisecond)
 		if (currentMillis - m.Stamp) < (3 * 60 * 60 * 1000) {
 			results = append(results, m)
