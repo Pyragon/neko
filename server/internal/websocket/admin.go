@@ -173,6 +173,8 @@ func (h *MessageHandler) adminMute(id string, session types.Session, payload *me
 
 	target.SetMuted(true)
 
+	h.logger.Info().Msg("MUTED USER: " + payload.Name)
+
 	if err := h.sessions.Broadcast(
 		message.AdminTarget{
 			Event:  event.ADMIN_MUTE,
@@ -199,6 +201,8 @@ func (h *MessageHandler) adminUnmute(id string, session types.Session, payload *
 	}
 
 	target.SetMuted(false)
+
+	h.logger.Info().Msg("UNMUTED USER: " + payload.Name)
 
 	if err := h.sessions.Broadcast(
 		message.AdminTarget{
@@ -288,7 +292,7 @@ func (h *MessageHandler) adminBan(id string, session types.Session, payload *mes
 			Event:  event.ADMIN_BAN,
 			Target: target.ID(),
 			Name:   session.Name(),
-		}, []string{payload.Name}); err != nil {
+		}, nil); err != nil {
 		h.logger.Warn().Err(err).Msgf("broadcasting event %s has failed", event.ADMIN_BAN)
 		return err
 	}
