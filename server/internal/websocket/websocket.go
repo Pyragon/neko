@@ -1,6 +1,7 @@
 package websocket
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -61,7 +62,7 @@ type WebSocketHandler struct {
 func (ws *WebSocketHandler) Start() error {
 	ws.sessions.OnCreated(func(id string, session types.Session) {
 		if err := ws.handler.SessionCreated(id, session); err != nil {
-			ws.logger.Warn().Str("id", id).Err(err).Msg("session created with and error")
+			ws.logger.Warn().Str("id", id).Err(err).Msg("session created with an error")
 		} else {
 			ws.logger.Debug().Str("id", id).Msg("session created")
 		}
@@ -136,8 +137,7 @@ func (ws *WebSocketHandler) Upgrade(w http.ResponseWriter, r *http.Request) erro
 
 		if err = connection.WriteJSON(message.Disconnect{
 			Event:   event.SYSTEM_DISCONNECT,
-			Message: "invalid_password",
-			Error:   err.Error(),
+			Message: err.Error(),
 		}); err != nil {
 			ws.logger.Error().Err(err).Msg("failed to send disconnect")
 		}
@@ -221,6 +221,10 @@ func (ws *WebSocketHandler) authenticate(r *http.Request) (string, string, bool,
 
 	if err != nil {
 		return "", ip, false, 0, "", err
+	}
+
+	if ws.sessions.Has(player.GetUsername()) {
+		return "", ip, false, 0, "", fmt.Errorf("User already connected")
 	}
 
 	return id, ip, false, player.GetRights(), player.GetUsername(), nil
