@@ -2,6 +2,7 @@ package websocket
 
 import (
 	"regexp"
+	"time"
 
 	"n.eko.moe/neko/internal/types"
 	"n.eko.moe/neko/internal/types/event"
@@ -20,6 +21,15 @@ func (h *MessageHandler) chat(id string, session types.Session, payload *message
 	if content == "" {
 		return nil
 	}
+
+	//is session.lastMessage less than 1 second ago?
+	currentMillis := time.Now().UnixNano() / int64(time.Millisecond)
+
+	if session.GetLastMessage() > currentMillis-1000 {
+		return nil
+	}
+
+	session.SetLastMessage(currentMillis)
 
 	if err := h.sessions.Broadcast(
 		message.ChatSend{

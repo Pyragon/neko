@@ -10,17 +10,18 @@ import (
 )
 
 type Session struct {
-	logger    zerolog.Logger
-	id        string
-	username  string
-	rights    int
-	admin     bool
-	muted     bool
-	connected bool
-	manager   *SessionManager
-	socket    types.WebSocket
-	peer      types.Peer
-	mu        sync.Mutex
+	logger      zerolog.Logger
+	id          string
+	username    string
+	rights      int
+	admin       bool
+	muted       bool
+	connected   bool
+	lastMessage int64
+	manager     *SessionManager
+	socket      types.WebSocket
+	peer        types.Peer
+	mu          sync.Mutex
 }
 
 func (session *Session) ID() string {
@@ -37,6 +38,14 @@ func (session *Session) Admin() bool {
 
 func (session *Session) GetRights() int {
 	return session.rights
+}
+
+func (session *Session) SetLastMessage(time int64) {
+	session.lastMessage = time
+}
+
+func (session *Session) GetLastMessage() int64 {
+	return session.lastMessage
 }
 
 func (session *Session) Muted() bool {

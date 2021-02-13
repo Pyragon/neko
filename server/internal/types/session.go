@@ -16,6 +16,8 @@ type Session interface {
 	Connected() bool
 	Member() *Member
 	SetMuted(muted bool)
+	GetLastMessage() int64
+	SetLastMessage(time int64)
 	SetConnected(connected bool) error
 	SetSocket(socket WebSocket) error
 	SetPeer(peer Peer) error
