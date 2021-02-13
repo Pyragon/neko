@@ -72,9 +72,14 @@ func (h *MessageHandler) removeMessage(id string, session types.Session, payload
 
 	for i, m := range h.messages {
 		if m.ID == payload.ID {
-			copy(h.messages[i:], h.messages[i+1:])
-			h.messages[len(h.messages)-1] = nil
-			h.messages = h.messages[:len(h.messages)-1]
+			if i == 0 {
+				//idk why we need to do this
+				h.messages = h.messages[:1]
+			} else {
+				copy(h.messages[i:], h.messages[i+1:])
+				h.messages[len(h.messages)-1] = nil
+				h.messages = h.messages[:len(h.messages)-1]
+			}
 			if err := h.sessions.Broadcast(
 				message.ChatRemove{
 					Event: event.CHAT_REMOVE,
