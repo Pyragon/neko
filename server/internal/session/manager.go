@@ -39,7 +39,7 @@ func (manager *SessionManager) New(id string, admin bool, rights int, username s
 		socket:    socket,
 		logger:    manager.logger.With().Str("id", id).Logger(),
 		connected: false,
-		muted:     false,
+		muted:     muted,
 	}
 
 	manager.members[username] = session
