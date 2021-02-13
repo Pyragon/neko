@@ -45,11 +45,25 @@ func (h *MessageHandler) chat(id string, session types.Session, payload *message
 		Content: content,
 	}
 
+	h.messages = append(h.messages, chatMessage)
+
 	if err := h.sessions.Broadcast(
 		message.ChatSend{
 			Event:       event.CHAT_MESSAGE,
 			Name:        session.Name(),
 			ChatMessage: chatMessage,
+		}, nil); err != nil {
+		h.logger.Warn().Err(err).Msgf("broadcasting event %s has failed", event.CONTROL_RELEASE)
+		return err
+	}
+	return nil
+}
+
+func (h *MessageHandler) sendPreviousChats(session types.Session) error {
+	if err := h.sessions.Broadcast(
+		message.ChatAll{
+			Event:    event.CHAT_ALL,
+			Messages: h.messages,
 		}, nil); err != nil {
 		h.logger.Warn().Err(err).Msgf("broadcasting event %s has failed", event.CONTROL_RELEASE)
 		return err

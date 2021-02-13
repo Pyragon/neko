@@ -26,6 +26,7 @@ const (
 )
 
 const (
+	CHAT_ALL     = "chat/all"
 	CHAT_MESSAGE = "chat/message"
 	CHAT_EMOTE   = "chat/emote"
 )

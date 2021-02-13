@@ -18,6 +18,7 @@ type MessageHandler struct {
 	webrtc    types.WebRTCManager
 	remote    types.RemoteManager
 	broadcast types.BroadcastManager
+	messages  []*types.ChatMessage
 	banned    map[string]bool
 	locked    bool
 }

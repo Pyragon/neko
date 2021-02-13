@@ -70,6 +70,11 @@ type ChatReceive struct {
 	Content string `json:"content"`
 }
 
+type ChatAll struct {
+	Event    string               `json:"event"`
+	Messages []*types.ChatMessage `json:"messages"`
+}
+
 type ChatSend struct {
 	Event       string             `json:"event"`
 	Name        string             `json:"name"`
