@@ -183,7 +183,7 @@ func (ws *WebSocketHandler) Upgrade(w http.ResponseWriter, r *http.Request) erro
 		ws.logger.Info().Msg(name + " IS NOT MUTED")
 	}
 
-	session := ws.sessions.New(id, admin, rights, name, muted, socket)
+	ws.sessions.New(id, admin, rights, name, muted, socket)
 
 	ws.logger.
 		Debug().
