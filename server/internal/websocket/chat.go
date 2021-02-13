@@ -37,7 +37,7 @@ var CENSORED = []*types.CensorType{
 	{
 		Regex: []string{
 			"https?://",
-			".(com)|(ca)|(co.uk)"
+			".(com)|(ca)|(co.uk)",
 		},
 		Replace: nil,
 	},
