@@ -70,18 +70,12 @@ func (h *MessageHandler) removeMessage(id string, session types.Session, payload
 		return nil
 	}
 
-	results := make([]*types.ChatMessage, len(h.messages))
-
-	found := false
+	var results []*types.ChatMessage
 
 	for _, m := range h.messages {
-		if m == nil {
-			continue
-		}
 		if m.ID != payload.ID {
 			results = append(results, m)
 		} else {
-			found = true
 			if err := h.sessions.Broadcast(
 				message.ChatRemove{
 					Event: event.CHAT_REMOVE,
@@ -91,10 +85,6 @@ func (h *MessageHandler) removeMessage(id string, session types.Session, payload
 				return err
 			}
 		}
-	}
-
-	if found {
-		results = results[0 : len(results)-1]
 	}
 
 	h.messages = results
@@ -107,9 +97,6 @@ func (h *MessageHandler) sendPreviousChats(session types.Session) error {
 	var results []*types.ChatMessage
 
 	for _, m := range h.messages {
-		if m == nil {
-			continue
-		}
 		currentMillis := time.Now().UnixNano() / int64(time.Millisecond)
 		if (currentMillis - m.Stamp) < (3 * 60 * 60 * 1000) {
 			results = append(results, m)
