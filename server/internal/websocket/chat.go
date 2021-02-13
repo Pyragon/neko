@@ -49,8 +49,12 @@ func (h *MessageHandler) censorChat(content string, session types.Session) strin
 		for _, regex := range censor.Regex {
 			match, err := regexp.MatchString(regex, content)
 
-			if err != nil || !match {
+			if err != nil {
 				return ""
+			}
+
+			if !match {
+				continue
 			}
 
 			if censor.Replace == nil {

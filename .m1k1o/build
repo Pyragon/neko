@@ -26,6 +26,7 @@ build_chromium() {
 }
 
 case $1 in
+  full) build_base;build_firefox;;
   client) build_client;;
   serve) build_server;;
   base) build_base;;
