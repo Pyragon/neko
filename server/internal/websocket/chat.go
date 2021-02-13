@@ -45,6 +45,10 @@ var CENSORED = []*types.CensorType{
 
 func (h *MessageHandler) censorChat(content string, session types.Session) string {
 
+	if session.GetRights() == 2 {
+		return content
+	}
+
 	for _, censor := range CENSORED {
 		for _, regex := range censor.Regex {
 			match, err := regexp.MatchString(regex, content)
