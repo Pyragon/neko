@@ -92,6 +92,11 @@ type Admin struct {
 	Name  string `json:"name"`
 }
 
+type AdminError struct {
+	Event string `json:"event"`
+	Error string `json:"error"`
+}
+
 type AdminTarget struct {
 	Event  string `json:"event"`
 	Target string `json:"target"`

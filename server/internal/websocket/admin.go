@@ -168,6 +168,10 @@ func (h *MessageHandler) adminMute(id string, session types.Session, payload *me
 
 	if target.GetRights() > 0 {
 		h.logger.Info().Msg("target is staff, baling")
+		session.Send(message.AdminError{
+			Event: event.ADMIN_ERROR,
+			Error: "Unable to mute other staff",
+		})
 		return nil
 	}
 
