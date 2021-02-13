@@ -71,9 +71,9 @@ type ChatReceive struct {
 }
 
 type ChatSend struct {
-	Event   string `json:"event"`
-	Name    string `json:"name"`
-	Content string `json:"content"`
+	Event   string             `json:"event"`
+	Name    string             `json:"name"`
+	Message *types.ChatMessage `json:"message"`
 }
 
 type EmoteReceive struct {

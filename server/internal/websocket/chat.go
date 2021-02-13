@@ -7,6 +7,7 @@ import (
 	"n.eko.moe/neko/internal/types"
 	"n.eko.moe/neko/internal/types/event"
 	"n.eko.moe/neko/internal/types/message"
+	"n.eko.moe/neko/internal/utils"
 )
 
 func (h *MessageHandler) chat(id string, session types.Session, payload *message.ChatReceive) error {
@@ -31,10 +32,22 @@ func (h *MessageHandler) chat(id string, session types.Session, payload *message
 
 	session.SetLastMessage(currentMillis)
 
+	chatId, err := utils.NewUID(32)
+
+	if err != nil {
+		return nil
+	}
+
+	chatMessage := &types.ChatMessage{
+		ID:      chatId,
+		Author:  session.Name(),
+		Content: content,
+	}
+
 	if err := h.sessions.Broadcast(
 		message.ChatSend{
 			Event:   event.CHAT_MESSAGE,
-			Content: content,
+			Message: chatMessage,
 			Name:    session.Name(),
 		}, nil); err != nil {
 		h.logger.Warn().Err(err).Msgf("broadcasting event %s has failed", event.CONTROL_RELEASE)
