@@ -201,12 +201,6 @@ func (ws *WebSocketHandler) Upgrade(w http.ResponseWriter, r *http.Request) erro
 
 	ws.handle(connection, id, name)
 
-	err = ws.handler.sendPreviousChats(session)
-
-	if err != nil {
-		ws.logger.Error().Msg("Error sending previous chats: " + err.Error())
-	}
-
 	return nil
 }
 

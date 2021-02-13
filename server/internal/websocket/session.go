@@ -65,6 +65,11 @@ func (h *MessageHandler) SessionConnected(id string, session types.Session) erro
 		}
 	}
 
+	if err := h.sendPreviousChats(session); err != nil {
+		h.logger.Error().Msg("Error sending previous chats: " + err.Error())
+		return err
+	}
+
 	// let everyone know there is a new session
 	if err := h.sessions.Broadcast(
 		message.Member{
