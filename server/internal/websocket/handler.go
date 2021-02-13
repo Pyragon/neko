@@ -98,6 +98,12 @@ func (h *MessageHandler) Message(id string, raw []byte, name string) error {
 			utils.Unmarshal(payload, raw, func() error {
 				return h.chat(id, session, payload)
 			}), "%s failed", header.Event)
+	case event.CHAT_REMOVE:
+		payload := &message.ChatRemove{}
+		return errors.Wrapf(
+			utils.Unmarshal(payload, raw, func() error {
+				return h.removeMessage(id, session, payload)
+			}), "%s failed", header.Event)
 	case event.CHAT_EMOTE:
 		payload := &message.EmoteReceive{}
 		return errors.Wrapf(

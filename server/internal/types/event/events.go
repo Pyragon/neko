@@ -28,6 +28,7 @@ const (
 const (
 	CHAT_ALL     = "chat/all"
 	CHAT_MESSAGE = "chat/message"
+	CHAT_REMOVE  = "chat/remove"
 	CHAT_EMOTE   = "chat/emote"
 )
 

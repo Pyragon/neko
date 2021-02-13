@@ -49,7 +49,7 @@ func (h *MessageHandler) chat(id string, session types.Session, payload *message
 	h.messages = append(h.messages, chatMessage)
 
 	if len(h.messages) > 200 {
-		h.messages = h.messages[1:]
+		_, h.messages = h.messages[len(h.messages)-1], h.messages[:len(h.messages)-1]
 	}
 
 	if err := h.sessions.Broadcast(
@@ -61,6 +61,31 @@ func (h *MessageHandler) chat(id string, session types.Session, payload *message
 		h.logger.Warn().Err(err).Msgf("broadcasting event %s has failed", event.CONTROL_RELEASE)
 		return err
 	}
+	return nil
+}
+
+func (h *MessageHandler) removeMessage(id string, session types.Session, payload *message.ChatRemove) error {
+
+	if session.GetRights() < 1 {
+		return nil
+	}
+
+	for i, m := range h.messages {
+		if m.ID == payload.ID {
+			copy(h.messages[i:], h.messages[i+1:])
+			h.messages[len(h.messages)-1] = nil
+			h.messages = h.messages[:len(h.messages)-1]
+			if err := h.sessions.Broadcast(
+				message.ChatRemove{
+					Event: event.CHAT_REMOVE,
+					ID:    m.ID,
+				}, nil); err != nil {
+				h.logger.Warn().Err(err).Msgf("broadcasting event %s has failed", event.CONTROL_RELEASE)
+				return err
+			}
+		}
+	}
+
 	return nil
 }
 
