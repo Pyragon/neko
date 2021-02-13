@@ -185,12 +185,6 @@ func (ws *WebSocketHandler) Upgrade(w http.ResponseWriter, r *http.Request) erro
 
 	session := ws.sessions.New(id, admin, rights, name, muted, socket)
 
-	err = ws.handler.sendPreviousChats(session)
-
-	if err != nil {
-		panic(err.Error())
-	}
-
 	ws.logger.
 		Debug().
 		Str("session", id).
@@ -206,6 +200,9 @@ func (ws *WebSocketHandler) Upgrade(w http.ResponseWriter, r *http.Request) erro
 	}()
 
 	ws.handle(connection, id, name)
+
+	ws.handler.sendPreviousChats(session)
+
 	return nil
 }
 
