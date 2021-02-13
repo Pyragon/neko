@@ -32,14 +32,15 @@ func (h *MessageHandler) chat(id string, session types.Session, payload *message
 
 	session.SetLastMessage(currentMillis)
 
-	chatId, err := utils.NewUID(32)
+	chatID, err := utils.NewUID(32)
 
 	if err != nil {
+		h.logger.Info().Msg("Error creating new ID: " + err.Error())
 		return nil
 	}
 
 	chatMessage := &types.ChatMessage{
-		ID:      chatId,
+		ID:      chatID,
 		Author:  session.Name(),
 		Content: content,
 	}
