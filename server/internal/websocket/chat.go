@@ -75,6 +75,9 @@ func (h *MessageHandler) removeMessage(id string, session types.Session, payload
 	found := false
 
 	for _, m := range h.messages {
+		if m == nil {
+			continue
+		}
 		if m.ID != payload.ID {
 			results = append(results, m)
 		} else {
