@@ -62,6 +62,7 @@ func (mysql *MySQLHandler) GetAccount(id string) (MovieNightSession, error) {
 	}
 
 	defer rows.Close()
+	defer db.Close()
 
 	result := MovieNight(session.id, session.username, session.sessionId, session.added)
 
@@ -91,6 +92,7 @@ func (mysql *MySQLHandler) GetPlayer(username string) (PlayerDataType, error) {
 	}
 
 	defer rows.Close()
+	defer db.Close()
 
 	result := PlayerData(player.id, player.username, player.rights, player.muted, player.banned)
 
