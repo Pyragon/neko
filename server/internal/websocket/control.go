@@ -94,6 +94,21 @@ func (h *MessageHandler) controlClipboard(id string, session types.Session, payl
 	return nil
 }
 
+func (h *MessageHandler) reloadNowPlaying(session types.Session) error {
+	if !h.sessions.IsHost(session.Name()) {
+		return nil
+	}
+
+	if err := h.sessions.Broadcast(
+		message.ControlTarget{
+			Event: event.NOW_PLAYING,
+		}, nil); err != nil {
+		h.logger.Warn().Err(err).Msgf("broadcasting event %s has failed", event.CONTROL_LOCKED)
+		return err
+	}
+	return nil
+}
+
 func (h *MessageHandler) controlKeyboard(id string, session types.Session, payload *message.Keyboard) error {
 	// check if session is host
 	if !h.sessions.IsHost(session.Name()) {

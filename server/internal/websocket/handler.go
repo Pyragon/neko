@@ -111,6 +111,10 @@ func (h *MessageHandler) Message(id string, raw []byte, name string) error {
 				return h.chatEmote(id, session, payload)
 			}), "%s failed", header.Event)
 
+	// Now Playing
+	case event.NOW_PLAYING:
+		return errors.Wrapf(h.reloadNowPlaying(session), "%s failed", header.Event)
+
 	// Screen Events
 	case event.SCREEN_RESOLUTION:
 		return errors.Wrapf(h.screenResolution(id, session), "%s failed", header.Event)

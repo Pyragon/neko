@@ -33,6 +33,10 @@ const (
 )
 
 const (
+	NOW_PLAYING = "playing/reload"
+)
+
+const (
 	SCREEN_CONFIGURATIONS = "screen/configurations"
 	SCREEN_RESOLUTION     = "screen/resolution"
 	SCREEN_SET            = "screen/set"
