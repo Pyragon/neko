@@ -95,7 +95,7 @@ func (h *MessageHandler) controlClipboard(id string, session types.Session, payl
 }
 
 func (h *MessageHandler) reloadNowPlaying(session types.Session) error {
-	if !h.sessions.IsHost(session.Name()) {
+	if session.GetRights() < 1 {
 		return nil
 	}
 
